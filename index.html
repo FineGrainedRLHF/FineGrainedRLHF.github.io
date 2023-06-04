@@ -303,24 +303,23 @@
 
       <div class="content has-text-justified">
         <p>
-          We collect <span style="color: red;"><b>QA-Feeback</b></span>, a dataset of long-form question answering, with humnan preferences and fine-grained feedback.
+          We collect <span style="color: red;"><b>QA-Feeback</b></span>, a dataset of long-form question answering, with human preferences and fine-grained feedback.
           QA-Feedback is based on ASQA, a dataset that focuses on answering ambiguous factoid questions.
         </p>
         <p>
-          There are three types of fine-grained human feedbacks, and we train a fine-grained reward model for each of them:
+          There are three types of fine-grained human feedback, and we train a fine-grained reward model for each of them:
         </p>
         <p>
-          <span class="err1marker">C1: irrelevance, repetition, and incoherence (rel.)</span>; The reward model is sub-sentence level, returning a score for each sub-sentence. 
+          <span class="err1marker">C1: irrelevance, repetition, and incoherence (rel.)</span>; The reward model has the density level of sub-sentences; i.e., returns a score for each sub-sentence. 
           If the sub-sentence is irrelevant, repetitive, or incoherent, the reward is -1; otherwise, the reward is +1.
         </p>
         <p>
-          <span class="err2marker">C2: incorrect or unverifiable facts (fact.)</span>; The reward model is sentence level,
-          returning a score for each sentence.
+          <span class="err2marker">C2: incorrect or unverifiable facts (fact.)</span>; The reward model has the density level of sentences; i.e., returns a score for each sentence.
           If the sentence has any factual error, the reward is -1; otherwise, the reward is +1.
         </p>
         <p>
-          <span class="err3marker">C3: incomplete information (comp.)</span>; The reward model check if the answer is complete and covers all the information in the reference passages that are related to the question.
-          This reward model gives one reward for the whole answer. 
+          <span class="err3marker">C3: incomplete information (comp.)</span>; The reward model checks if the response is complete and covers all the information in the reference passages that are related to the question.
+          This reward model gives one reward for the whole response. 
         </p>
       </div>
 
@@ -337,11 +336,10 @@
       <div class="content has-text-justified">
       
       <p>We compare our <b>Fine-Grained RLHF</b> with the following baselines:</p>
-        <p><b>SFT</b>: The supervised finetuning model that is used as the initial policy for our RLHF experiments.</p>
+        <p><b>SFT</b>: The supervised finetuning model (trained on 1K training examples) that is used as the initial policy for our RLHF experiments.</p>
         <p><b>Pref. RLHF</b>: The baseline RLHF model that uses holistic reward.</p>  
-        <p><b>SFT-Full</b>: For comparison, for all the samples that we collect feedback, we also have a human-written gold answer, 
-        We further finetune SFT with these gold answers and denote this model as SFT-Full. Notice that each gold answer takes 15min to write, 
-      which takes much longer time than feedback.</p>
+        <p><b>SFT-Full</b>: We finetune LM with human-written responses (provided by ASQA) of all training examples and denote this model as SFT-Full. Notice that each gold response takes 15 min to annotate (according to ASQA), 
+      which takes much longer time than our feedback annotation (6 min).</p>
         </p>
       </div>
 
@@ -366,7 +364,7 @@
       <img src="static/images/customization.png" style="width:100%;">
       <div class="content has-text-justified">
         By changing the weight of the <span class="err1marker"><b>Relevance reward model</b></span>, and keeping the weight of the other two reward models fixed,
-        we can customize how detailed and lengthy the LM answers would be.
+        we can customize how detailed and lengthy the LM responses would be.
         Here we compare the outputs of three LMs, trained with different reward model combinations.
       </div>
     </div>
@@ -381,9 +379,9 @@
       <br><br>
       <div class="content has-text-justified">
         We find that there is a trade-off between the three reward models. 
-        <span class="err1marker"><b>relevance RM</b></span> prefers shorter and more concise answers, while <span class="err3marker"><b>Info Completeness RM</b></span> prefers longer and more informative answers.
-        Thus, these two rewards are competing against each other during training and eventually reach a balance.
-        Meanwhile, <span class="err2marker"><b>Factuality RM</b></span> is continuously improving the factual correctness of the answer.
+        <span class="err1marker"><b>Relevance RM</b></span> prefers shorter and more concise responses, while <span class="err3marker"><b>Info Completeness RM</b></span> prefers longer and more informative responses.
+        Thus, these two rewards compete against each other during training and eventually reach a balance.
+        Meanwhile, <span class="err2marker"><b>Factuality RM</b></span> continuously improves the factual correctness of the response.
         Finally, removing any one of the reward models will degrade the performance.
 
       </div>
