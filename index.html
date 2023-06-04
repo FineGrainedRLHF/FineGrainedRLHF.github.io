@@ -36,6 +36,22 @@
   <script src="./static/js/bulma-carousel.min.js"></script>
   <script src="./static/js/bulma-slider.min.js"></script>
   <script src="./static/js/index.js"></script>
+
+  <style>
+    .err1marker {
+      background-color: rgb(202,229,242);
+      padding: 3px;
+    }
+    .err2marker {
+      background-color: rgb(254,255,126);
+      padding: 3px;
+    }
+    .err3marker {
+      background-color: rgb(153,240,194);
+      padding: 3px;
+    }
+  </style>
+
 </head>
 <body>
 <!-- Google Tag Manager (noscript) -->
@@ -105,7 +121,7 @@
                   <span class="icon">
                       <i class="fab fa-github"></i>
                   </span>
-                  <span>Codebase: FineGrainedRLHF</span>
+                  <span>Code: Coming Soon!</span>
                   </a>
               </span>
               <!-- Dataset Link. -->
@@ -135,11 +151,14 @@
 <section class="hero teaser">
   <div class="container is-max-desktop">
     <div class="hero-body">
-      <img src="./static/images/teaser.jpg" alt="tifa teaser">
-            <h2 class="subtitle has-text-centered">
-              We propose <span style="color: red;"><b>Fine-Grained RLHF</b></span>, a framework that enables training and learning from reward functions that are fine-grained in two respects: (1) density,
-              providing a reward after every segment (e.g., a sentence) is generated; and (2) incorporating multiple reward models
-              associated with different feedback types (e.g., factual incorrectness, irrelevance, and information incompleteness).
+      <img src="./static/images/teaser-smaller.jpg" alt="tifa teaser">
+            <h2 class="subtitle">
+              <p>We propose <span style="color: red;"><b>Fine-Grained RLHF</b></span>, a framework that enables training and learning
+              from reward functions that are fine-grained in two respects:</p>
+              <p>
+                (1) density, providing a reward after every segment (e.g., a sentence) is generated
+              </p>
+                (2) incorporating multiple reward models associated with different feedback types (e.g., factual incorrectness, irrelevance, and information incompleteness).
             </h2>
 
       
@@ -158,7 +177,7 @@
           (LM) outputs. However, this type of holistic feedback
           offers limited information.
           In our paper, we introduce <span style="color: red;"><b>fine-grained human feedback</b></span> (e.g.,
-          identification of inaccurate sentences or irrelevant sub-sentences) as an explicit training signal.
+          which sub-sentence is irrelevant, which sentence is not truthful, which sentence is toxic) as an explicit training signal.
         </p>
         <p>
           Our rewards are fine-grained in two aspects:
@@ -223,7 +242,7 @@
       <h2 class="title is-3">Updates</h2>
       <div class="content has-text-justified">
         <p>
-          <b>2023/06/05</b> Our codebase, FineGrainedRLHF, is released! Customizable for different tasks/rewards.<br>
+          <b>TODO</b> Our codebase, FineGrainedRLHF, will be released soon!<br>
           <b>2023/06/05</b> QA-Feedback, our long-form QA dataset with human preferences + fine-grained feedback, is released!<br>
           <b>2023/06/05</b> Paper is released!<br>
         </p>
@@ -236,22 +255,142 @@
   <div class="hero-body">
     <div class="container is-max-desktop is-centered has-text-centered">
       <h2 class="title is-3">Task 1: Detoxification</h2>
-      <img src="static/images/tifa_webapproach.png">
+
       <div class="content has-text-justified">
         <p>
-          (a) <b>Overview of how TIFA evaluates the faithfulness of a synthesized image.</b> TIFA uses a language model (LM), a question answering (QA) model, and a visual question answering (VQA) model. Given a text input, we generate several question-answer pairs with the LM and then filter them via the QA model. To evaluate the faithfulness of a synthesized image to the text input, a VQA model answers these visual questions using the image, and we check the answers for correctness.
+          The task of detoxification aims to reduce the toxicity in the model generation.
+        </p>
+      </div>
+
+
+      <img src="static/images/toxicity_demo.png" style="width:60%;">
+      <div class="content has-text-justified">
+        <p>
+          We use Perspective API to measure toxicity. It returns toxicity value is a real number between 0 (not toxic) and 1 (toxic),
+          We compare two kinds of rewards:
         </p>
         <p>
-          (b) <b>TIFA v1.0 benchmark.</b> While TIFA is applicable to any text prompt, to allow direct comparison across different studies, and for ease of use, we introduce the TIFA v1.0 benchmark, a repository of text inputs along with pre-generated question-answer pairs. To evaluate a text-to-image model, a user first produces the images for the text inputs in TIFA v1.0 and then performs VQA with our provided tools on generated images to compute TIFA.
+          (a) <b>Holistic Rewards for (non-)Toxicity</b>: We use 1-Perspective(y) as the reward
+        </p>
+          <p>
+          (b) <b>Sentence-level (Fine-Grained) Rewards for (non-)Toxicity</b>: We query the API after the model generates each sentence instead of generating the full sequence. For each generated
+          sentence, we use -&Delta;(Perspective(y)) as the reward for the sentence (i.e. how much toxicity is changed from generating the current sentence).
+          </p>
+      </div>
+      <img src="static/images/toxicity_results.png" style="width:100%;">
+      <br><br>
+      <div class="content has-text-justified">
+        <p>
+          Table 1 shows that Our Fine-Grained RLHF with sentence-level
+          fine-grained reward attains the lowest toxicity and perplexity among all methods, while maintaining
+          a similar level of diversity. Figure 2 shows that learning from denser fine-grained reward is more <b>sample
+            efficient</b> than holistic reward. One explanation is that fine-grained reward locates where the toxic content is, which is a
+          stronger training signal compared with a scalar reward for the whole text.
+        </p>
+      </div>
+
+
+    </div>
+  </div>
+</section>
+
+
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container is-max-desktop is-centered has-text-centered">
+      <h2 class="title is-3">Task 2: Long-Form Question Answering</h2>
+
+      <div class="content has-text-justified">
+        <p>
+          We collect <span style="color: red;"><b>QA-Feeback</b></span>, a dataset of long-form question answering, with humnan preferences and fine-grained feedback.
+          QA-Feedback is based on ASQA, a dataset that focuses on answering ambiguous factoid questions.
         </p>
         <p>
-          (c) <b>Our question-answer pair generation pipeline.</b> The whole pipeline can be executed via a single inference of GPT-3 via in-context learning. Given the text prompt, GPT-3 first extracts the elements and then generates two questions for each element. The GPT-3 output is then parsed and filtered by UnifiedQA.
+          There are three types of fine-grained human feedbacks, and we train a fine-grained reward model for each of them:
         </p>
+        <p>
+          <span class="err1marker">C1: irrelevance, repetition, and incoherence</span>; The reward model is sub-sentence level, returning a score for each sub-sentence. 
+          If the sub-sentence is irrelevant, repetitive, or incoherent, the reward is -1; otherwise, the reward is +1.
+        </p>
+        <p>
+          <span class="err2marker">C2: incorrect or unverifiable facts</span>; The reward model is sentence level,
+          returning a score for each sentence.
+          If the sentence has any factual error, the reward is -1; otherwise, the reward is +1.
+        </p>
+        <p>
+          <span class="err3marker">C3: incomplete information</span>; This reward model check if the answer is complete and covers all the information in the reference passages that are related to the question.
+          This reward model gives one reward for the whole answer. 
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container is-max-desktop is-centered has-text-centered">
+      <h2 class="title is-3">Human evaluation results</h2>
+
+      <div class="content has-text-justified">
+      
+      <p>We compare our <b>Fine-Grained RLHF</b> with the following baselines:</p>
+        <p><b>SFT</b>: The supervised finetuning model that is used as the initial policy for our RLHF experiments.</p>
+        <p><b>Pref. RLHF</b>: The baseline RLHF model that uses holistic reward.</p>  
+        <p><b>SFT-Full</b>: For comparison, for all the samples that we collect feedback, we also have a human-written gold answer, 
+        We further finetune SFT with these gold answers and denote this model as SFT-Full. Notice that each gold answer takes 15min to write, 
+      which takes much longer time than feedback.</p>
+        </p>
+      </div>
+
+
+      <img src="static/images/human_eval.png" style="width:100%;">
+      <div class="content has-text-justified">
+        <p> 
+          Human evaluation shows that our <b>Fine-Grained RLHF</b> outperforms SFT and Preference RLHF on all error types. 
+          Also, RLHF (both preference-based and fine-grained) are particularly effective in reducing factual errors.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container is-max-desktop is-centered has-text-centered">
+      <h2 class="title is-3">Customize LM behaviors</h2>
+      <img src="static/images/customization.png" style="width:100%;">
+      <div class="content has-text-justified">
+        By changing the weight of the <span class="err1marker"><b>relevance RM</b></span>. 
+        We can customize how detailed and lengthy the LM answer should be. Here we show three examples of different levels of detail.
+        
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container is-max-desktop is-centered has-text-centered">
+      <h2 class="title is-3">Fine-Grained reward models both complement and compete with each other</h2>
+      <img src="static/images/analysis.png" style="width:100%;">
+      <br><br>
+      <div class="content has-text-justified">
+        We find that there is a trade-off between the three reward models. 
+        <span class="err1marker"><b>relevance RM</b></span> prefers shorter and more concise answers, while <span class="err3marker"><b>Info Completeness RM</b></span> prefers longer and more informative answers.
+        Thus, these two rewards are competing against each other during training and eventually reach a balance.
+        Meanwhile, <span class="err2marker"><b>Factuality RM</b></span> is continuously improving the factual correctness of the answer.
+        Finally, removing any one of the reward models will severely degrade the performance.
 
       </div>
     </div>
   </div>
 </section>
+
+
 
 
 
