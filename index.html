@@ -310,16 +310,16 @@
           There are three types of fine-grained human feedbacks, and we train a fine-grained reward model for each of them:
         </p>
         <p>
-          <span class="err1marker">C1: irrelevance, repetition, and incoherence</span>; The reward model is sub-sentence level, returning a score for each sub-sentence. 
+          <span class="err1marker">C1: irrelevance, repetition, and incoherence (rel.)</span>; The reward model is sub-sentence level, returning a score for each sub-sentence. 
           If the sub-sentence is irrelevant, repetitive, or incoherent, the reward is -1; otherwise, the reward is +1.
         </p>
         <p>
-          <span class="err2marker">C2: incorrect or unverifiable facts</span>; The reward model is sentence level,
+          <span class="err2marker">C2: incorrect or unverifiable facts (fact.)</span>; The reward model is sentence level,
           returning a score for each sentence.
           If the sentence has any factual error, the reward is -1; otherwise, the reward is +1.
         </p>
         <p>
-          <span class="err3marker">C3: incomplete information</span>; This reward model check if the answer is complete and covers all the information in the reference passages that are related to the question.
+          <span class="err3marker">C3: incomplete information (comp.)</span>; The reward model check if the answer is complete and covers all the information in the reference passages that are related to the question.
           This reward model gives one reward for the whole answer. 
         </p>
       </div>
