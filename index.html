@@ -258,7 +258,9 @@
 
       <div class="content has-text-justified">
         <p>
-          The task of detoxification aims to reduce the toxicity in the model generation.
+          The task of detoxification aims to reduce the toxicity in the model generation. We use Perspective API to measure toxicity. It returns toxicity value is a real number between 0 (not toxic) and 1
+          (toxic).
+
         </p>
       </div>
 
@@ -266,7 +268,6 @@
       <img src="static/images/toxicity_demo.png" style="width:60%;">
       <div class="content has-text-justified">
         <p>
-          We use Perspective API to measure toxicity. It returns toxicity value is a real number between 0 (not toxic) and 1 (toxic),
           We compare two kinds of rewards:
         </p>
         <p>
